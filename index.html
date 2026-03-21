@@ -777,24 +777,23 @@
 
       <div class="project-card reveal">
         <span class="project-tag">Cloud Detection · Geostationary</span>
-        <h3 class="project-title">Global 6-Satellite Cloud Detection System</h3>
-        <p class="project-desc">Automated cloud detection pipeline ingesting live data from 6 geostationary satellites (GOES-18/19, Himawari-8/9, MSG-2, MTG-0) covering the entire Earth disk. Generates weighted cloud statistics and GeoJSON exports for global weather analysis. Resolved critical MSG-2 GRIB2 coordinate failure by implementing EUMETSAT inverse projection formulas, restoring Indian Ocean coverage at sub-kilometer accuracy.</p>
+        <h3 class="project-title">Cloud Detection System via Geostationary Satellites</h3>
+        <p class="project-desc">Automated cloud detection pipeline ingesting live data from 8 geostationary satellites (GOES-16,18,19, Himawari-8,9, MSG-2,3, MTG-0) covering the entire Earth disk, with rigorous sub-pixel fractional coverage estimation using Shapely polygon intersection. Implemented a ground-up SEVIRI coordinate reconstruction pipeline from raw GRIB navigation keys using the WMO GDT 3.90 inverse projection, handling the rarely-documented scanning mode differences between EUMETSAT's prime and IODC services. Generated weighted cloud statistics and GeoJSON exports for global weather analysis.</p>
         <div class="project-metrics">
-          <span class="metric-pill">6 satellites</span>
-          <span class="metric-pill">Full Earth coverage</span>
-          <span class="metric-pill">74.6% on-Earth coverage</span>
+          <span class="metric-pill">8 Geostationary satellites</span>
+          <span class="metric-pill">Complete Global coverage</span>
+          <span class="metric-pill">SEVIRI</span>
+          <span class="metric-pill">Cloud Fraction</span>
           <span class="metric-pill">Sub-km accuracy</span>
         </div>
         <p class="project-stack">Python · Satpy · GDAL · EUMETSAT APIs · GeoJSON · Concurrent Processing</p>
       </div>
 
       <div class="project-card reveal">
-        <span class="project-tag">Atmospheric Science · ML</span>
+        <span class="project-tag">Atmospheric Science · WRF</span>
         <h3 class="project-title">Methane Plume Detection &amp; Quantification</h3>
-        <p class="project-desc">CSDNet-based cloud segmentation pipeline for multispectral satellite imagery reducing false positives in methane plume detection. Developed physics-based OpenCV feature extraction workflow for automated plume segmentation from WRF concentration fields. Validated two independent quantification methodologies (IME, cross-sectional, Gaussian) against simulated point-source ground truth.</p>
+        <p class="project-desc">Scaled methane plume simulation from 5 to 36,750 synthetic plumes using the Weather Research and Forecasting (WRF) model, a 7,350× increase in training data that unlocked statistically robust algorithm development. Independently validated three quantification methodologies; IME, cross-sectional flux, and Gaussian fit, against simulated point-source ground truth, establishing a rigorous benchmark for emissions retrieval accuracy.</p>
         <div class="project-metrics">
-          <span class="metric-pill">98% precision</span>
-          <span class="metric-pill">23% fewer false positives</span>
           <span class="metric-pill">30% faster processing</span>
           <span class="metric-pill">25% pipeline efficiency gain</span>
         </div>
@@ -804,20 +803,26 @@
       <div class="project-card reveal">
         <span class="project-tag">Public Health · Real-Time</span>
         <h3 class="project-title">Cholera Real-Time Risk Detection Platform</h3>
-        <p class="project-desc">Streamlit and Cloudflare web application for real-time cholera risk detection across 10+ countries. Bayesian and statistical models for monthly prediction sustaining 80% inference validity for 4-week advance forecasts. Eliminated all manual calculation workflows, reducing pipeline execution from 6 hours to under 3 minutes.</p>
+        <p class="project-desc">Streamlit and Cloudflare web application for real-time cholera risk detection across 10+ countries. Bayesian and statistical models for monthly prediction sustaining 80% inference validity for 4-week advance forecasts. Eliminated all manual calculation workflows, reducing pipeline execution from 6 hours to under 5.5 minutes.</p>
         <div class="project-metrics">
-          <span class="metric-pill">98% pipeline speedup</span>
-          <span class="metric-pill">10+ countries</span>
-          <span class="metric-pill">80% 4-week forecast validity</span>
-          <span class="metric-pill">70% reliability gain</span>
+          <span class="metric-pill">6 hours → 5.5 minutes</span>
+          <span class="metric-pill">195 countries</span>
+          <span class="metric-pill">4-week forecast validity</span>
         </div>
-        <p class="project-stack">Python · Streamlit · Cloudflare · Bayesian Modeling · MODIS · GPM</p>
+        <p class="project-stack">Python · Streamlit · Cloudflare · Remotely Sensed Environmental Variables</p>
+        <a href="https://tubes-hotels-suburban-dakota.trycloudflare.com/" target="_blank"
+           style="display:inline-flex; align-items:center; gap:0.4rem; margin-top:1.25rem;
+                  padding:0.55rem 1.25rem; background:var(--teal); color:var(--navy);
+                  font-weight:600; font-size:0.8rem; letter-spacing:0.05em;
+                  border-radius:4px; text-decoration:none; transition:background 0.2s;">
+          Launch App →
+        </a>
       </div>
 
       <div class="project-card reveal">
         <span class="project-tag">Deep Learning · Oceanography</span>
-        <h3 class="project-title">Vibrio Habitat Suitability — TabNet &amp; XGBoost Models</h3>
-        <p class="project-desc">TabNet deep learning model for Vibrio suitability prediction integrating 11 oceanographic variables across 350,506 spatial locations. XGBoost model mapping global Vibrio habitat suitability for Summer 2025 across 450,786 data points. Processed 10+ TB of multi-source satellite datasets (MODIS, GPM, MERRA, PACE, TRMM) to engineer all model inputs.</p>
+        <h3 class="project-title">Vibrio Habitat Suitability — TabNet &amp; XGBoost Models;</h3>
+        <p class="project-desc">TabNet deep learning model for Vibrio suitability prediction integrating 11 oceanographic variables across 350,506 spatial locations. XGBoost model mapping global Vibrio habitat suitability for Summer 2025 across 450,786 data points. Processed 3+ TB of multi-source satellite datasets (MODIS, GPM, MERRA, PACE, TRMM) to engineer all model inputs.</p>
         <div class="project-metrics">
           <span class="metric-pill">94% accuracy (AUC 0.943)</span>
           <span class="metric-pill">84.7% XGBoost accuracy</span>
@@ -830,12 +835,12 @@
       <div class="project-card reveal">
         <span class="project-tag">Foundation Model · Training Data</span>
         <h3 class="project-title">CLAY 1.5 Training Pipeline — Sentinel-2 Patches</h3>
-        <p class="project-desc">Produced 457,491 image patches (2 TB) across PAN and VNIR bands for multiple satellites at 1D and 1G levels. Created 15,000 Sentinel-2 L2A patches for RGBNIR and LULC classification for CLAY 1.5 foundation model training. Fine-tuned OmniCloudMask on 3,256 IRIS-annotated images; performed cloud detection across 5+ TB of satellite imagery.</p>
+        <p class="project-desc">Produced 457,491 image patches (1.2 TB) across PAN and VNIR bands for multiple satellites at 1D and 1G levels after stacking them together. Created 15,000 Sentinel-2 L2A patches for RGBNIR and LULC classification for CLAY 1.5 foundation model training. Fine-tuned OmniCloudMask on 3,256 IRIS-annotated images; performed cloud detection across 3+ TB of satellite imagery.</p>
         <div class="project-metrics">
           <span class="metric-pill">457,491 patches</span>
-          <span class="metric-pill">2 TB dataset</span>
+          <span class="metric-pill">1.2 TB datasets</span>
           <span class="metric-pill">15,000 Sentinel patches</span>
-          <span class="metric-pill">5+ TB processed</span>
+          <span class="metric-pill">3+ TB processed</span>
         </div>
         <p class="project-stack">Python · IRIS · OmniCloudMask · Sentinel-2 · GDAL · Rasterio</p>
       </div>
@@ -878,6 +883,15 @@
       </div>
 
       <div class="pub-card reveal">
+        <div class="pub-number">03</div>
+        <div>
+          <span class="pub-status inprogress">In Progress</span>
+          <p class="pub-title">Machine Learning Approaches to Detect Global Vibrio Suitability Using Oceanographic Satellite Products</p>
+          <p class="pub-journal">XGBOOST · TABNET · RANDOM FOREST</p>
+        </div>
+      </div>
+
+      <div class="pub-card reveal">
         <div class="pub-number">02</div>
         <div>
           <span class="pub-status published">Published</span>
@@ -888,16 +902,7 @@
           </p>
         </div>
       </div>
-
-      <div class="pub-card reveal">
-        <div class="pub-number">03</div>
-        <div>
-          <span class="pub-status inprogress">In Progress</span>
-          <p class="pub-title">Machine Learning Approaches to Detect Global Vibrio Suitability Using Oceanographic Satellite Products</p>
-          <p class="pub-journal">XGBOOST · TABNET · RANDOM FOREST</p>
-        </div>
-      </div>
-
+     
       <div class="pub-card reveal">
         <div class="pub-number">04</div>
         <div>
@@ -957,7 +962,7 @@
           <ul class="exp-bullets">
             <li>Engineered automated cloud detection system across 6 geostationary satellites (GOES-18/19, Himawari-8/9, MSG-2, MTG-0) covering the full Earth disk with GeoJSON export workflows.</li>
             <li>Restored MSG-2 Indian Ocean monitoring (74.6% coverage at sub-km accuracy) by implementing EUMETSAT inverse projection formulas from first principles.</li>
-            <li>Reduced methane plume false positives 23% via CSDNet cloud segmentation; accelerated pipeline 30% with physics-based OpenCV feature extraction.</li>
+            <li>Utilized the WRF model for simulation of methane plumes; and accelerated existing pipeline 30% with physics-based OpenCV feature extraction.</li>
             <li>Validated two independent methane quantification methodologies at 98% precision against simulated ground truth.</li>
             <li>Produced 457,491 image patches (2 TB) for CLAY 1.5 foundation model training; fine-tuned OmniCloudMask on 3,256 images.</li>
           </ul>
