@@ -11,18 +11,18 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --navy: #0B1E3D;
-    --navy-mid: #152d56;
-    --teal: #0E9B82;
-    --teal-light: #12BFA0;
-    --teal-dim: rgba(14,155,130,0.12);
-    --teal-glow: rgba(14,155,130,0.25);
-    --cream: #F5F0E8;
-    --cream-dim: rgba(245,240,232,0.06);
-    --white: #FAFAF8;
-    --muted: rgba(245,240,232,0.5);
-    --border: rgba(245,240,232,0.1);
-    --card-bg: rgba(21,45,86,0.5);
+    --navy: #0D0800;
+    --navy-mid: #1C1400;
+    --amber: #FFB300;
+    --amber-light: #FFD54F;
+    --amber-dim: rgba(255,179,0,0.12);
+    --amber-glow: rgba(255,179,0,0.22);
+    --cream: #FFF8E8;
+    --cream-dim: rgba(255,248,232,0.06);
+    --white: #FFFDF5;
+    --muted: rgba(255,248,232,0.5);
+    --border: rgba(255,248,232,0.1);
+    --card-bg: rgba(28,20,0,0.65);
   }
 
   html { scroll-behavior: smooth; }
@@ -33,26 +33,46 @@
     color: var(--cream);
     line-height: 1.6;
     overflow-x: hidden;
+    cursor: none;
   }
 
-  /* ── NOISE TEXTURE OVERLAY ── */
+  /* ── CUSTOM CURSOR ── */
+  #cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--amber);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(255,179,0,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.12s ease-out;
+  }
+  body:has(a:hover) #cursor { width: 16px; height: 16px; background: var(--amber-light); }
+  body:has(a:hover) #cursor-ring { width: 52px; height: 52px; border-color: var(--amber); }
+  body:has(.project-card:hover) #cursor { background: var(--amber-light); }
+
+  /* ── NOISE TEXTURE ── */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
+    position: fixed; inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
+    pointer-events: none; z-index: 0; opacity: 0.45;
   }
 
-  /* ── CONSTELLATION BACKGROUND ── */
-  #constellation {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.35;
+  /* ── SATELLITE CANVAS ── */
+  #satCanvas {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 0;
   }
 
   /* ── LAYOUT ── */
@@ -73,378 +93,268 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(11,30,61,0.85);
-    backdrop-filter: blur(12px);
+    background: rgba(13,8,0,0.88);
+    backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
     transition: all 0.3s;
   }
-
   .nav-logo {
     font-family: 'DM Mono', monospace;
     font-size: 0.85rem;
-    color: var(--teal);
+    color: var(--amber);
     letter-spacing: 0.05em;
     text-decoration: none;
   }
-
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
-
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
   .nav-links a {
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-    text-decoration: none;
-    transition: color 0.2s;
+    font-size: 0.8rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none;
+    transition: color 0.2s; position: relative;
   }
-
-  .nav-links a:hover { color: var(--teal-light); }
+  .nav-links a::after {
+    content: ''; position: absolute;
+    bottom: -3px; left: 0; right: 0;
+    height: 1px; background: var(--amber);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.25s;
+  }
+  .nav-links a:hover { color: var(--amber-light); }
+  .nav-links a:hover::after { transform: scaleX(1); }
 
   /* ── HERO ── */
   #hero {
     min-height: 100vh;
-    display: flex;
-    align-items: center;
+    display: flex; align-items: center;
     padding: 8rem 0 5rem;
     position: relative;
   }
-
   .hero-inner {
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 4rem;
-    align-items: center;
-    width: 100%;
+    gap: 4rem; align-items: center; width: 100%;
   }
-
   .hero-label {
     font-family: 'DM Mono', monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--teal);
+    font-size: 0.75rem; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--amber);
     margin-bottom: 1.25rem;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.2s forwards;
+    opacity: 0; animation: fadeUp 0.6s 0.2s forwards;
   }
-
   .hero-name {
     font-family: 'DM Serif Display', serif;
     font-size: clamp(3rem, 6vw, 5.5rem);
-    line-height: 1.05;
-    color: var(--white);
+    line-height: 1.05; color: var(--white);
     margin-bottom: 0.5rem;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.35s forwards;
+    opacity: 0; animation: fadeUp 0.6s 0.35s forwards;
   }
-
-  .hero-name em {
-    font-style: italic;
-    color: var(--teal-light);
-  }
-
+  .hero-name em { font-style: italic; color: var(--amber-light); }
   .hero-title {
     font-family: 'DM Mono', monospace;
-    font-size: 0.9rem;
-    color: var(--teal);
-    letter-spacing: 0.08em;
-    margin-bottom: 1.75rem;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.5s forwards;
+    font-size: 0.9rem; color: var(--amber);
+    letter-spacing: 0.08em; margin-bottom: 1.75rem;
+    opacity: 0; animation: fadeUp 0.6s 0.5s forwards;
+    min-height: 1.4em;
   }
-
   .hero-tagline {
-    font-size: 1.15rem;
-    font-weight: 300;
-    color: var(--muted);
-    max-width: 560px;
-    line-height: 1.75;
-    margin-bottom: 2.5rem;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.65s forwards;
+    font-size: 1.05rem; font-weight: 300;
+    color: var(--muted); max-width: 560px;
+    line-height: 1.8; margin-bottom: 2.5rem;
+    opacity: 0; animation: fadeUp 0.6s 0.65s forwards;
   }
-
-  .hero-tagline strong {
-    color: var(--cream);
-    font-weight: 500;
-  }
-
+  .hero-tagline strong { color: var(--cream); font-weight: 500; }
   .hero-cta {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp 0.6s 0.8s forwards;
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 0.6s 0.8s forwards;
   }
 
+  /* ── BUTTONS ── */
   .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: inline-flex; align-items: center; gap: 0.5rem;
     padding: 0.75rem 1.75rem;
-    background: var(--teal);
-    color: var(--navy);
-    font-weight: 600;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-    border-radius: 4px;
+    background: var(--amber); color: var(--navy);
+    font-weight: 600; font-size: 0.85rem;
+    letter-spacing: 0.05em; border-radius: 4px;
     text-decoration: none;
-    transition: background 0.2s, transform 0.2s;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
   }
-
   .btn-primary:hover {
-    background: var(--teal-light);
+    background: var(--amber-light);
     transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255,179,0,0.3);
   }
-
   .btn-outline {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: inline-flex; align-items: center; gap: 0.5rem;
     padding: 0.75rem 1.75rem;
-    border: 1px solid var(--border);
-    color: var(--cream);
-    font-weight: 400;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-    border-radius: 4px;
+    border: 1px solid var(--border); color: var(--cream);
+    font-weight: 400; font-size: 0.85rem;
+    letter-spacing: 0.05em; border-radius: 4px;
     text-decoration: none;
     transition: border-color 0.2s, color 0.2s, transform 0.2s;
   }
-
   .btn-outline:hover {
-    border-color: var(--teal);
-    color: var(--teal-light);
+    border-color: var(--amber); color: var(--amber-light);
     transform: translateY(-2px);
   }
 
   /* ── HERO STATS ── */
   .hero-stats {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    opacity: 0;
-    animation: fadeIn 0.8s 1s forwards;
+    display: flex; flex-direction: column; gap: 1.25rem;
+    opacity: 0; animation: fadeIn 0.8s 1s forwards;
   }
-
   .stat-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-left: 3px solid var(--teal);
-    padding: 1rem 1.5rem;
-    border-radius: 6px;
-    min-width: 180px;
-    backdrop-filter: blur(8px);
+    border-left: 3px solid var(--amber);
+    padding: 1rem 1.5rem; border-radius: 6px;
+    min-width: 190px; backdrop-filter: blur(8px);
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: default;
   }
-
+  .stat-card:hover {
+    transform: translateX(4px);
+    box-shadow: -4px 0 20px rgba(255,179,0,0.15);
+    border-left-color: var(--amber-light);
+  }
   .stat-num {
     font-family: 'DM Serif Display', serif;
-    font-size: 2rem;
-    color: var(--teal-light);
-    line-height: 1;
-    margin-bottom: 0.2rem;
+    font-size: 2rem; color: var(--amber-light);
+    line-height: 1; margin-bottom: 0.2rem;
   }
-
   .stat-label {
-    font-size: 0.7rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font-size: 0.7rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--muted);
   }
 
-  /* ── SECTION ── */
-  section {
-    padding: 6rem 0;
-    position: relative;
-    z-index: 1;
-  }
-
+  /* ── SECTIONS ── */
+  section { padding: 6rem 0; position: relative; z-index: 1; }
   .section-label {
     font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--teal);
+    font-size: 0.7rem; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--amber);
     margin-bottom: 0.75rem;
   }
-
   .section-title {
     font-family: 'DM Serif Display', serif;
     font-size: clamp(2rem, 4vw, 3rem);
-    color: var(--white);
-    margin-bottom: 3.5rem;
+    color: var(--white); margin-bottom: 3.5rem;
     line-height: 1.1;
   }
-
   .section-divider {
-    width: 100%;
-    height: 1px;
-    background: var(--border);
-    margin-bottom: 4rem;
+    width: 100%; height: 1px;
+    background: var(--border); margin-bottom: 4rem;
   }
 
-  /* ── PROJECTS ── */
+  /* ── PROJECT CARDS ── */
   .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1.5rem;
   }
-
   .project-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 2rem;
+    border-radius: 10px; padding: 2rem;
     backdrop-filter: blur(8px);
-    transition: border-color 0.3s, transform 0.3s;
-    position: relative;
-    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
   }
-
   .project-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--teal);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s;
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--amber), var(--amber-light));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.35s;
   }
-
+  .project-card::after {
+    content: ''; position: absolute;
+    inset: 0; border-radius: 10px;
+    background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,179,0,0.06) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none;
+  }
   .project-card:hover {
-    border-color: var(--teal-glow);
-    transform: translateY(-4px);
+    border-color: rgba(255,179,0,0.35);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(255,179,0,0.08);
   }
-
-  .project-card:hover::before {
-    transform: scaleX(1);
-  }
+  .project-card:hover::before { transform: scaleX(1); }
+  .project-card:hover::after { opacity: 1; }
 
   .project-tag {
     display: inline-block;
     font-family: 'DM Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--teal);
-    background: var(--teal-dim);
-    padding: 0.25rem 0.6rem;
-    border-radius: 3px;
+    font-size: 0.65rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--amber);
+    background: var(--amber-dim);
+    padding: 0.25rem 0.6rem; border-radius: 3px;
     margin-bottom: 1rem;
   }
-
   .project-title {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.35rem;
-    color: var(--white);
-    margin-bottom: 0.75rem;
-    line-height: 1.25;
+    font-size: 1.35rem; color: var(--white);
+    margin-bottom: 0.75rem; line-height: 1.25;
   }
-
   .project-desc {
-    font-size: 0.875rem;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 1.5rem;
+    font-size: 0.875rem; color: var(--muted);
+    line-height: 1.7; margin-bottom: 1.5rem;
   }
-
   .project-metrics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
+    display: flex; flex-wrap: wrap;
+    gap: 0.5rem; margin-bottom: 1.5rem;
   }
-
   .metric-pill {
     font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--teal-light);
-    background: var(--teal-dim);
-    border: 1px solid rgba(14,155,130,0.2);
-    padding: 0.25rem 0.65rem;
-    border-radius: 100px;
+    font-size: 0.7rem; color: var(--amber-light);
+    background: var(--amber-dim);
+    border: 1px solid rgba(255,179,0,0.2);
+    padding: 0.25rem 0.65rem; border-radius: 100px;
+    transition: background 0.2s, border-color 0.2s;
   }
-
-  .project-stack {
-    font-size: 0.75rem;
-    color: var(--muted);
-    opacity: 0.7;
+  .metric-pill:hover {
+    background: rgba(255,179,0,0.2);
+    border-color: rgba(255,179,0,0.5);
   }
+  .project-stack { font-size: 0.75rem; color: var(--muted); opacity: 0.7; }
 
   /* ── PUBLICATIONS ── */
-  .publications-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
+  .publications-list { display: flex; flex-direction: column; gap: 1.25rem; }
   .pub-card {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 1.5rem;
-    align-items: start;
+    display: grid; grid-template-columns: auto 1fr;
+    gap: 1.5rem; align-items: start;
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.5rem;
+    border-radius: 8px; padding: 1.5rem;
     backdrop-filter: blur(8px);
-    transition: border-color 0.2s;
+    transition: border-color 0.25s, transform 0.25s;
   }
-
-  .pub-card:hover { border-color: rgba(14,155,130,0.3); }
-
+  .pub-card:hover {
+    border-color: rgba(255,179,0,0.3);
+    transform: translateX(4px);
+  }
   .pub-number {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.75rem;
-    color: var(--teal-dim);
-    color: rgba(14,155,130,0.3);
-    line-height: 1;
-    min-width: 2rem;
-    text-align: right;
+    font-size: 1.75rem; color: rgba(255,179,0,0.2);
+    line-height: 1; min-width: 2rem; text-align: right;
   }
-
   .pub-status {
     display: inline-block;
     font-family: 'DM Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
+    font-size: 0.6rem; letter-spacing: 0.15em;
     text-transform: uppercase;
-    padding: 0.2rem 0.5rem;
-    border-radius: 3px;
+    padding: 0.2rem 0.5rem; border-radius: 3px;
     margin-bottom: 0.5rem;
   }
-
-  .pub-status.published { color: #0E9B82; background: rgba(14,155,130,0.1); }
-  .pub-status.preprint { color: #EF9F27; background: rgba(239,159,39,0.1); }
-  .pub-status.inprogress { color: #E24B4A; background: rgba(226,75,74,0.1); }
-
+  .pub-status.published { color: #4CAF82; background: rgba(76,175,130,0.12); }
+  .pub-status.preprint  { color: #FFB300; background: rgba(255,179,0,0.12); }
+  .pub-status.inprogress { color: #E24B4A; background: rgba(226,75,74,0.12); }
   .pub-title {
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--cream);
-    margin-bottom: 0.35rem;
-    line-height: 1.45;
+    font-size: 0.95rem; font-weight: 500;
+    color: var(--cream); margin-bottom: 0.35rem; line-height: 1.45;
   }
-
-  .pub-journal {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-bottom: 0.3rem;
-  }
-
-  .pub-summary {
-    font-size: 0.78rem;
-    color: var(--muted);
-    opacity: 0.75;
-    font-style: italic;
-  }
+  .pub-journal { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.3rem; }
+  .pub-summary { font-size: 0.78rem; color: var(--muted); opacity: 0.75; font-style: italic; }
 
   /* ── SKILLS ── */
   .skills-grid {
@@ -452,156 +362,86 @@
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 1.25rem;
   }
-
   .skill-group {
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.5rem;
+    border-radius: 8px; padding: 1.5rem;
     backdrop-filter: blur(8px);
+    transition: border-color 0.2s;
   }
-
+  .skill-group:hover { border-color: rgba(255,179,0,0.2); }
   .skill-group-title {
     font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--teal);
+    font-size: 0.7rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--amber);
     margin-bottom: 1rem;
   }
-
-  .skill-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .skill-tag {
-    font-size: 0.75rem;
-    color: var(--cream);
-    background: rgba(245,240,232,0.07);
+    font-size: 0.75rem; color: var(--cream);
+    background: rgba(255,248,232,0.06);
     border: 1px solid var(--border);
-    padding: 0.3rem 0.65rem;
-    border-radius: 4px;
+    padding: 0.3rem 0.65rem; border-radius: 4px;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    cursor: default;
+  }
+  .skill-tag:hover {
+    background: var(--amber-dim);
+    border-color: rgba(255,179,0,0.3);
+    color: var(--amber-light);
   }
 
   /* ── EXPERIENCE ── */
-  .experience-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
+  .experience-list { display: flex; flex-direction: column; }
   .exp-item {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    gap: 2rem;
-    padding: 2.5rem 0;
+    display: grid; grid-template-columns: 1fr 3fr;
+    gap: 2rem; padding: 2.5rem 0;
     border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
   }
-
   .exp-item:last-child { border-bottom: none; }
-
-  .exp-meta {
-    padding-top: 0.25rem;
-  }
-
   .exp-dates {
     font-family: 'DM Mono', monospace;
-    font-size: 0.72rem;
-    color: var(--teal);
-    letter-spacing: 0.05em;
-    margin-bottom: 0.35rem;
+    font-size: 0.72rem; color: var(--amber);
+    letter-spacing: 0.05em; margin-bottom: 0.35rem;
   }
-
-  .exp-org {
-    font-size: 0.8rem;
-    color: var(--muted);
-    line-height: 1.5;
-  }
-
+  .exp-org { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
   .exp-role {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.3rem;
-    color: var(--white);
-    margin-bottom: 1rem;
+    font-size: 1.3rem; color: var(--white); margin-bottom: 1rem;
   }
-
-  .exp-bullets {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
   .exp-bullets li {
-    font-size: 0.875rem;
-    color: var(--muted);
-    line-height: 1.65;
-    padding-left: 1.25rem;
-    position: relative;
+    font-size: 0.875rem; color: var(--muted);
+    line-height: 1.65; padding-left: 1.25rem; position: relative;
   }
-
   .exp-bullets li::before {
-    content: '▸';
-    position: absolute;
-    left: 0;
-    color: var(--teal);
-    font-size: 0.7rem;
-    top: 0.15rem;
+    content: '▸'; position: absolute; left: 0;
+    color: var(--amber); font-size: 0.7rem; top: 0.15rem;
   }
 
   /* ── EDUCATION ── */
-  .edu-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-  }
-
+  .edu-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
   .edu-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.75rem;
+    border-radius: 8px; padding: 1.75rem;
     backdrop-filter: blur(8px);
+    transition: border-color 0.2s, transform 0.2s;
   }
-
+  .edu-card:hover { border-color: rgba(255,179,0,0.25); transform: translateY(-3px); }
   .edu-degree {
     font-family: 'DM Serif Display', serif;
-    font-size: 1.05rem;
-    color: var(--white);
-    margin-bottom: 0.4rem;
-    line-height: 1.3;
+    font-size: 1.05rem; color: var(--white); margin-bottom: 0.4rem;
   }
-
-  .edu-field {
-    font-size: 0.8rem;
-    color: var(--teal);
-    margin-bottom: 0.5rem;
-  }
-
-  .edu-school {
-    font-size: 0.8rem;
-    color: var(--muted);
-    margin-bottom: 0.25rem;
-  }
-
-  .edu-year {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--muted);
-    opacity: 0.65;
-  }
-
+  .edu-field { font-size: 0.8rem; color: var(--amber); margin-bottom: 0.5rem; }
+  .edu-school { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.25rem; }
+  .edu-year { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); opacity: 0.65; }
   .edu-gpa {
-    display: inline-block;
-    margin-top: 0.6rem;
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--teal);
-    background: var(--teal-dim);
-    padding: 0.2rem 0.5rem;
-    border-radius: 3px;
+    display: inline-block; margin-top: 0.6rem;
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    color: var(--amber); background: var(--amber-dim);
+    padding: 0.2rem 0.5rem; border-radius: 3px;
   }
 
   /* ── CONTACT ── */
@@ -610,99 +450,83 @@
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
   }
-
   .contact-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center;
   }
-
   .contact-heading {
     font-family: 'DM Serif Display', serif;
     font-size: clamp(1.8rem, 3vw, 2.5rem);
-    color: var(--white);
-    margin-bottom: 1rem;
-    line-height: 1.15;
+    color: var(--white); margin-bottom: 1rem; line-height: 1.15;
   }
-
-  .contact-sub {
-    font-size: 0.9rem;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 2rem;
-  }
-
-  .contact-links {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
+  .contact-sub { font-size: 0.9rem; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; }
+  .contact-links { display: flex; flex-direction: column; gap: 1rem; }
   .contact-link {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    text-decoration: none;
-    color: var(--cream);
-    padding: 1rem 1.25rem;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    display: flex; align-items: center; gap: 1rem;
+    text-decoration: none; color: var(--cream);
+    padding: 1rem 1.25rem; background: var(--card-bg);
+    border: 1px solid var(--border); border-radius: 8px;
     font-size: 0.875rem;
-    transition: border-color 0.2s, color 0.2s;
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
   }
-
   .contact-link:hover {
-    border-color: var(--teal);
-    color: var(--teal-light);
+    border-color: var(--amber); color: var(--amber-light);
+    transform: translateX(4px);
   }
-
   .contact-link-icon {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    color: var(--teal);
-    min-width: 60px;
-    letter-spacing: 0.05em;
+    font-family: 'DM Mono', monospace; font-size: 0.7rem;
+    color: var(--amber); min-width: 60px; letter-spacing: 0.05em;
   }
 
   /* ── FOOTER ── */
   footer {
-    padding: 2rem;
-    text-align: center;
+    padding: 2rem; text-align: center;
     font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.1em;
-    color: var(--muted);
-    opacity: 0.5;
-    position: relative;
-    z-index: 1;
+    font-size: 0.7rem; letter-spacing: 0.1em;
+    color: var(--muted); opacity: 0.5;
+    position: relative; z-index: 1;
   }
+
+  /* ── SCROLL PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 2px; background: linear-gradient(90deg, var(--amber), var(--amber-light));
+    z-index: 200; width: 0%; transition: width 0.1s;
+  }
+
+  /* ── SECTION ACTIVE INDICATOR ── */
+  .nav-links a.active { color: var(--amber-light); }
+  .nav-links a.active::after { transform: scaleX(1); }
 
   /* ── ANIMATIONS ── */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(20px); }
     to   { opacity: 1; transform: translateY(0); }
   }
-
   @keyframes fadeIn {
     from { opacity: 0; }
     to   { opacity: 1; }
   }
-
+  @keyframes blink {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .cursor-blink {
+    display: inline-block; width: 2px; height: 1em;
+    background: var(--amber); margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 0.8s infinite;
+  }
   .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.6s, transform 0.6s;
+    opacity: 0; transform: translateY(28px);
+    transition: opacity 0.65s, transform 0.65s;
   }
-
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
+    body { cursor: auto; }
+    #cursor, #cursor-ring { display: none; }
     .hero-inner { grid-template-columns: 1fr; }
     .hero-stats { flex-direction: row; flex-wrap: wrap; }
     .exp-item { grid-template-columns: 1fr; gap: 0.75rem; }
@@ -714,16 +538,19 @@
 </head>
 <body>
 
-<!-- Constellation canvas -->
-<canvas id="constellation"></canvas>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div id="progress-bar"></div>
+<canvas id="satCanvas"></canvas>
 
 <!-- NAV -->
-<nav>
+<nav id="nav">
   <a href="#hero" class="nav-logo">KS // Remote Sensing</a>
   <ul class="nav-links">
     <li><a href="#projects">Projects</a></li>
     <li><a href="#publications">Publications</a></li>
     <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
@@ -735,9 +562,9 @@
       <div>
         <p class="hero-label">Ph.D. · University of Florida · Gainesville</p>
         <h1 class="hero-name">Komalpreet Singh<br><em>Ph.D.</em></h1>
-        <p class="hero-title">Remote Sensing Scientist, Atmospheric Modeler &amp; Environmental Health Scientist</p>
+        <p class="hero-title" id="typing-title"><span id="typed-text"></span><span class="cursor-blink"></span></p>
         <p class="hero-tagline">
-        I'm a Remote Sensing Scientist with <strong>5+ years</strong> architecting production-scale satellite data pipelines, ML-driven environmental models, and geospatial systems across climate, public health, and precision agriculture. I've processed <strong>10+ TB of multi-sensor imagery</strong> across 8 geostationary platforms; GOES, Himawari, MSG, and MTG, combining deep physics-based signal processing with end-to-end ML engineering to convert raw sensor data into <strong>decision-ready intelligence.</strong>
+          I'm a Remote Sensing Scientist with <strong>5+ years</strong> architecting production-scale satellite data pipelines, ML-driven environmental models, and geospatial systems across climate, public health, and precision agriculture. I've processed <strong>10+ TB of multi-sensor imagery</strong> across 8 geostationary platforms — GOES, Himawari, MSG, and MTG — combining deep physics-based signal processing with end-to-end ML engineering to convert raw sensor data into <strong>decision-ready intelligence.</strong>
         </p>
         <div class="hero-cta">
           <a href="#projects" class="btn-primary">View Projects</a>
@@ -747,19 +574,19 @@
       </div>
       <div class="hero-stats">
         <div class="stat-card">
-          <div class="stat-num">10+</div>
+          <div class="stat-num" data-target="10" data-suffix="+">0</div>
           <div class="stat-label">TB Satellite Data Processed</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num">94%</div>
+          <div class="stat-num" data-target="94" data-suffix="%">0</div>
           <div class="stat-label">Model Accuracy (AUC 0.943)</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num">98%</div>
-          <div class="stat-label">Pipeline Speedup (6hr → 3min)</div>
+          <div class="stat-num" data-target="98" data-suffix="%">0</div>
+          <div class="stat-label">Pipeline Speedup (6hr → 5.5min)</div>
         </div>
         <div class="stat-card">
-          <div class="stat-num">6</div>
+          <div class="stat-num" data-target="6" data-suffix="">0</div>
           <div class="stat-label">Peer-Reviewed Publications</div>
         </div>
       </div>
@@ -778,12 +605,11 @@
       <div class="project-card reveal">
         <span class="project-tag">Cloud Detection · Geostationary</span>
         <h3 class="project-title">Cloud Detection System via Geostationary Satellites</h3>
-        <p class="project-desc">Automated cloud detection pipeline ingesting live data from 8 geostationary satellites (GOES-16,18,19, Himawari-8,9, MSG-2,3, MTG-0) covering the entire Earth disk, with rigorous sub-pixel fractional coverage estimation using Shapely polygon intersection. Implemented a ground-up SEVIRI coordinate reconstruction pipeline from raw GRIB navigation keys using the WMO GDT 3.90 inverse projection, handling the rarely-documented scanning mode differences between EUMETSAT's prime and IODC services. Generated weighted cloud statistics and GeoJSON exports for global weather analysis.</p>
+        <p class="project-desc">Automated cloud detection pipeline ingesting live data from 8 geostationary satellites (GOES-16,18,19, Himawari-8,9, MSG-2,3, MTG-0) covering the entire Earth disk, with rigorous sub-pixel fractional coverage estimation using Shapely polygon intersection. Implemented ground-up SEVIRI coordinate reconstruction from raw GRIB navigation keys using WMO GDT 3.90 inverse projection, handling rarely-documented scanning mode differences between EUMETSAT prime and IODC services.</p>
         <div class="project-metrics">
           <span class="metric-pill">8 Geostationary satellites</span>
           <span class="metric-pill">Complete Global coverage</span>
           <span class="metric-pill">SEVIRI</span>
-          <span class="metric-pill">Cloud Fraction</span>
           <span class="metric-pill">Sub-km accuracy</span>
         </div>
         <p class="project-stack">Python · Satpy · GDAL · EUMETSAT APIs · GeoJSON · Concurrent Processing</p>
@@ -792,10 +618,12 @@
       <div class="project-card reveal">
         <span class="project-tag">Atmospheric Science · WRF</span>
         <h3 class="project-title">Methane Plume Detection &amp; Quantification</h3>
-        <p class="project-desc">Scaled methane plume simulation from 5 to 36,750 synthetic plumes using the Weather Research and Forecasting (WRF) model, a 7,350× increase in training data that unlocked statistically robust algorithm development. Independently validated three quantification methodologies; IME, cross-sectional flux, and Gaussian fit, against simulated point-source ground truth, establishing a rigorous benchmark for emissions retrieval accuracy.</p>
+        <p class="project-desc">Scaled methane plume simulation from 5 to 36,750 synthetic plumes using WRF — a 7,350× increase in training data unlocking statistically robust algorithm development. Built a physics-based OpenCV feature extraction pipeline for automated plume segmentation from WRF concentration fields. Independently validated three quantification methodologies — IME, cross-sectional flux, and Gaussian fit — against simulated point-source ground truth at 98% precision.</p>
         <div class="project-metrics">
+          <span class="metric-pill">7,350× more training data</span>
+          <span class="metric-pill">98% precision</span>
           <span class="metric-pill">30% faster processing</span>
-          <span class="metric-pill">25% pipeline efficiency gain</span>
+          <span class="metric-pill">25% efficiency gain</span>
         </div>
         <p class="project-stack">Python · OpenCV · WRF-ARW · CSDNet · Scikit-learn · HDF5</p>
       </div>
@@ -803,34 +631,21 @@
       <div class="project-card reveal">
         <span class="project-tag">Public Health · Real-Time</span>
         <h3 class="project-title">Cholera Real-Time Risk Detection Platform</h3>
-      
-        <p class="project-desc">Real-time cholera risk platform delivering 1km × 1km pixel-level
-        and district-scale risk surfaces across 195 countries. Bayesian and statistical models
-        sustain 80% inference validity for 4-week advance forecasts, reducing pipeline execution
-        from 6 hours to under 5.5 minutes.</p>
-      
+        <p class="project-desc">Real-time cholera risk platform delivering 1km × 1km pixel-level and district-scale risk surfaces across 195 countries. Bayesian and statistical models sustain 80% inference validity for 4-week advance forecasts, reducing pipeline execution from 6 hours to under 5.5 minutes.</p>
         <div class="project-metrics">
           <span class="metric-pill">6 hours → 5.5 minutes</span>
           <span class="metric-pill">195 countries</span>
           <span class="metric-pill">1km × 1km resolution</span>
           <span class="metric-pill">4-week forecast validity</span>
         </div>
-      
         <p class="project-stack">Python · Streamlit · Cloudflare · Leaflet.js · Remotely Sensed Environmental Variables</p>
-      
-        <div style="display:flex; gap:0.75rem; margin-top:1.25rem; flex-wrap:wrap;">
+        <div style="display:flex;gap:0.75rem;margin-top:1.25rem;flex-wrap:wrap;">
           <a href="https://tubes-hotels-suburban-dakota.trycloudflare.com/" target="_blank"
-             style="display:inline-flex; align-items:center; gap:0.4rem;
-                    padding:0.55rem 1.25rem; background:var(--teal); color:var(--navy);
-                    font-weight:600; font-size:0.8rem; letter-spacing:0.05em;
-                    border-radius:4px; text-decoration:none; transition:background 0.2s;">
+             style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.55rem 1.25rem;background:var(--amber);color:var(--navy);font-weight:600;font-size:0.8rem;letter-spacing:0.05em;border-radius:4px;text-decoration:none;transition:background 0.2s;">
             Launch App →
           </a>
           <a href="https://tubes-hotels-suburban-dakota.trycloudflare.com/?job=77b80d31f2904d4c9e15db4d5925a698" target="_blank"
-             style="display:inline-flex; align-items:center; gap:0.4rem;
-                    padding:0.55rem 1.25rem; border:1px solid var(--border);
-                    color:var(--cream); font-size:0.8rem; letter-spacing:0.05em;
-                    border-radius:4px; text-decoration:none; transition:border-color 0.2s;">
+             style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.55rem 1.25rem;border:1px solid var(--border);color:var(--cream);font-size:0.8rem;letter-spacing:0.05em;border-radius:4px;text-decoration:none;transition:border-color 0.2s;">
             View Sample Map →
           </a>
         </div>
@@ -838,7 +653,7 @@
 
       <div class="project-card reveal">
         <span class="project-tag">Deep Learning · Oceanography</span>
-        <h3 class="project-title">Vibrio Habitat Suitability — TabNet &amp; XGBoost Models;</h3>
+        <h3 class="project-title">Vibrio Habitat Suitability — TabNet &amp; XGBoost Models</h3>
         <p class="project-desc">TabNet deep learning model for Vibrio suitability prediction integrating 11 oceanographic variables across 350,506 spatial locations. XGBoost model mapping global Vibrio habitat suitability for Summer 2025 across 450,786 data points. Processed 3+ TB of multi-source satellite datasets (MODIS, GPM, MERRA, PACE, TRMM) to engineer all model inputs.</p>
         <div class="project-metrics">
           <span class="metric-pill">94% accuracy (AUC 0.943)</span>
@@ -852,10 +667,10 @@
       <div class="project-card reveal">
         <span class="project-tag">Foundation Model · Training Data</span>
         <h3 class="project-title">CLAY 1.5 Training Pipeline — Sentinel-2 Patches</h3>
-        <p class="project-desc">Produced 457,491 image patches (1.2 TB) across PAN and VNIR bands for multiple satellites at 1D and 1G levels after stacking them together. Created 15,000 Sentinel-2 L2A patches for RGBNIR and LULC classification for CLAY 1.5 foundation model training. Fine-tuned OmniCloudMask on 3,256 IRIS-annotated images; performed cloud detection across 3+ TB of satellite imagery.</p>
+        <p class="project-desc">Produced 457,491 image patches (1.2 TB) across PAN and VNIR bands for multiple satellites at 1D and 1G levels. Created 15,000 Sentinel-2 L2A patches for RGBNIR and LULC classification for CLAY 1.5 foundation model training. Fine-tuned OmniCloudMask on 3,256 IRIS-annotated images; performed cloud detection across 3+ TB of satellite imagery.</p>
         <div class="project-metrics">
           <span class="metric-pill">457,491 patches</span>
-          <span class="metric-pill">1.2 TB datasets</span>
+          <span class="metric-pill">1.2 TB dataset</span>
           <span class="metric-pill">15,000 Sentinel patches</span>
           <span class="metric-pill">3+ TB processed</span>
         </div>
@@ -893,18 +708,7 @@
           <span class="pub-status preprint">Pre-print</span>
           <p class="pub-title">Remote Sensing to Predict Climate-Sensitive Pathogens: a Review</p>
           <p class="pub-journal">Satellite Datasets · Infectious Diseases · Public Health · Remote Sensing</p>
-          <p class="pub-summary">
-            <a href="https://essopenarchive.org/users/711036/articles/1373358-remote-sensing-to-predict-climate-sensitive-pathogens-a-review" target="_blank" style="color:var(--teal);text-decoration:none;">View publication →</a>
-          </p>
-        </div>
-      </div>
-
-      <div class="pub-card reveal">
-        <div class="pub-number">03</div>
-        <div>
-          <span class="pub-status inprogress">In Progress</span>
-          <p class="pub-title">Machine Learning Approaches to Detect Global Vibrio Suitability Using Oceanographic Satellite Products</p>
-          <p class="pub-journal">XGBOOST · TABNET · RANDOM FOREST</p>
+          <p class="pub-summary"><a href="https://essopenarchive.org/users/711036/articles/1373358-remote-sensing-to-predict-climate-sensitive-pathogens-a-review" target="_blank" style="color:var(--amber);text-decoration:none;">View publication →</a></p>
         </div>
       </div>
 
@@ -914,21 +718,26 @@
           <span class="pub-status published">Published</span>
           <p class="pub-title">Anticipatory Decision-Making for Cholera in Malawi</p>
           <p class="pub-journal">Cholera · Remotely Sensed Environmental Datasets · Geospatial Data Analysis</p>
-          <p class="pub-summary">
-            <a href="https://journals.asm.org/doi/full/10.1128/mbio.00529-23" target="_blank" style="color:var(--teal);text-decoration:none;">View publication →</a>
-          </p>
+          <p class="pub-summary"><a href="https://journals.asm.org/doi/full/10.1128/mbio.00529-23" target="_blank" style="color:var(--amber);text-decoration:none;">View publication →</a></p>
         </div>
       </div>
-     
+
+      <div class="pub-card reveal">
+        <div class="pub-number">03</div>
+        <div>
+          <span class="pub-status inprogress">In Progress</span>
+          <p class="pub-title">Machine Learning Approaches to Detect Global Vibrio Suitability Using Oceanographic Satellite Products</p>
+          <p class="pub-journal">XGBoost · TabNet · Random Forest</p>
+        </div>
+      </div>
+
       <div class="pub-card reveal">
         <div class="pub-number">04</div>
         <div>
           <span class="pub-status published">Published</span>
           <p class="pub-title">Quantification of Climate Footprints of Vibrio vulnificus in Coastal Human Communities of the United States Gulf Coast</p>
           <p class="pub-journal">Vibrio vulnificus · Geospatial Data Analysis &amp; Visualization</p>
-          <p class="pub-summary">
-            <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2023GH001005" target="_blank" style="color:var(--teal);text-decoration:none;">View publication →</a>
-          </p>
+          <p class="pub-summary"><a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2023GH001005" target="_blank" style="color:var(--amber);text-decoration:none;">View publication →</a></p>
         </div>
       </div>
 
@@ -937,10 +746,8 @@
         <div>
           <span class="pub-status published">Published</span>
           <p class="pub-title">Genomic Diversity of Vibrio spp. and Metagenomic Analysis of Pathogens in Florida Gulf Coastal Waters Following Hurricane Ian</p>
-          <p class="pub-journal">mBio · ASM Journals · Atmospheric Remote Sensing</p>
-          <p class="pub-summary">
-            <a href="https://journals.asm.org/doi/full/10.1128/mbio.01476-23" target="_blank" style="color:var(--teal);text-decoration:none;">View publication →</a>
-          </p>
+          <p class="pub-journal">mBio · ASM Journals</p>
+          <p class="pub-summary"><a href="https://journals.asm.org/doi/full/10.1128/mbio.01476-23" target="_blank" style="color:var(--amber);text-decoration:none;">View publication →</a></p>
         </div>
       </div>
 
@@ -950,12 +757,9 @@
           <span class="pub-status published">Published</span>
           <p class="pub-title">Relative Performance of Satellite-Based Navigation Systems for Improving Tractor Productivity</p>
           <p class="pub-journal">Punjab Agricultural University · Precision Agriculture · 2021</p>
-          <p class="pub-summary"
-           ><a href="https://indianjournals.com/api/article-view/jre-58-5-018" target="_blank" style="color:var(--teal);text-decoration:none;">View publication →</a>
-          </p>
+          <p class="pub-summary"><a href="https://indianjournals.com/api/article-view/jre-58-5-018" target="_blank" style="color:var(--amber);text-decoration:none;">View publication →</a></p>
         </div>
       </div>
-
 
     </div>
   </div>
@@ -977,11 +781,11 @@
         <div>
           <h3 class="exp-role">Remote Sensing Scientist</h3>
           <ul class="exp-bullets">
-            <li>Engineered automated cloud detection system across 6 geostationary satellites (GOES-18/19, Himawari-8/9, MSG-2, MTG-0) covering the full Earth disk with GeoJSON export workflows.</li>
+            <li>Engineered automated cloud detection system across 8 geostationary satellites covering the full Earth disk with GeoJSON export workflows.</li>
             <li>Restored MSG-2 Indian Ocean monitoring (74.6% coverage at sub-km accuracy) by implementing EUMETSAT inverse projection formulas from first principles.</li>
-            <li>Utilized the WRF model for simulation of methane plumes; and accelerated existing pipeline 30% with physics-based OpenCV feature extraction.</li>
+            <li>Scaled methane plume simulation 7,350× (5 → 36,750 plumes) via WRF; accelerated pipeline 30% with physics-based OpenCV feature extraction.</li>
             <li>Validated two independent methane quantification methodologies at 98% precision against simulated ground truth.</li>
-            <li>Produced 457,491 image patches (2 TB) for CLAY 1.5 foundation model training; fine-tuned OmniCloudMask on 3,256 images.</li>
+            <li>Produced 457,491 image patches (1.2 TB) for CLAY 1.5 foundation model training; fine-tuned OmniCloudMask on 3,256 images.</li>
           </ul>
         </div>
       </div>
@@ -994,7 +798,7 @@
         <div>
           <h3 class="exp-role">Ph.D. Researcher — Remote Sensing &amp; Environmental Science</h3>
           <ul class="exp-bullets">
-            <li>Slashed cholera risk pipeline from 6 hours to 3 minutes (98% reduction) by building a Streamlit + Cloudflare real-time detection platform deployed across 10+ countries.</li>
+            <li>Slashed cholera risk pipeline from 6 hours to 5.5 minutes by building a Streamlit + Cloudflare real-time detection platform deployed across 195 countries.</li>
             <li>Achieved 94% accuracy (AUC 0.943) with TabNet model integrating 11 oceanographic variables across 350,506 spatial locations.</li>
             <li>Delivered 84.7% XGBoost classification across 450,786 spatial points mapping global Vibrio suitability for Summer 2025.</li>
             <li>Processed, cleaned, and harmonized 10+ TB of multi-source satellite data (MODIS, GPM, MERRA, PACE, TRMM) for all downstream models.</li>
@@ -1031,7 +835,6 @@
           </ul>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -1063,7 +866,7 @@
         <p class="skill-group-title">Satellite Platforms</p>
         <div class="skill-tags">
           <span class="skill-tag">GOES-18/19</span><span class="skill-tag">Himawari-8/9</span>
-          <span class="skill-tag">MSG-2</span><span class="skill-tag">MTG-0</span><span class="skill-tag">Sentinel-2</span>
+          <span class="skill-tag">MSG-2/3</span><span class="skill-tag">MTG-0</span><span class="skill-tag">Sentinel-2</span>
           <span class="skill-tag">MODIS</span><span class="skill-tag">MERRA-2</span><span class="skill-tag">PACE</span><span class="skill-tag">GPM</span>
         </div>
       </div>
@@ -1130,26 +933,22 @@
   <div class="container">
     <div class="contact-inner">
       <div class="reveal">
-        <h2 class="contact-heading">Let's work<br><em style="font-family:'DM Serif Display',serif;font-style:italic;color:var(--teal-light)">together.</em></h2>
+        <h2 class="contact-heading">Let's work<br><em style="font-family:'DM Serif Display',serif;font-style:italic;color:var(--amber-light)">together.</em></h2>
         <p class="contact-sub">I'm actively exploring full-time roles in remote sensing, geospatial ML, environmental data science, and atmospheric monitoring. I am authorized to work in the US.</p>
         <a href="mailto:singhkp083@gmail.com" class="btn-primary" style="display:inline-flex;">Send an Email</a>
       </div>
       <div class="contact-links reveal">
         <a href="mailto:singhkp083@gmail.com" class="contact-link">
-          <span class="contact-link-icon">Email</span>
-          singhkp083@gmail.com
+          <span class="contact-link-icon">Email</span>singhkp083@gmail.com
         </a>
         <a href="https://linkedin.com/in/komalpreet--singh" target="_blank" class="contact-link">
-          <span class="contact-link-icon">LinkedIn</span>
-          komalpreet--singh
+          <span class="contact-link-icon">LinkedIn</span>komalpreet--singh
         </a>
         <a href="https://github.com/Komal-72" target="_blank" class="contact-link">
-          <span class="contact-link-icon">GitHub</span>
-          github.com/Komal-72
+          <span class="contact-link-icon">GitHub</span>github.com/Komal-72
         </a>
         <a href="#" class="contact-link">
-          <span class="contact-link-icon">Scholar</span>
-          Google Scholar Profile
+          <span class="contact-link-icon">Scholar</span>Google Scholar Profile
         </a>
       </div>
     </div>
@@ -1161,85 +960,226 @@
 </footer>
 
 <script>
-/* ── CONSTELLATION ── */
-const canvas = document.getElementById('constellation');
+/* ── CUSTOM CURSOR ── */
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  cur.style.left = mx + 'px'; cur.style.top = my + 'px';
+  rx += (mx - rx) * 0.15; ry += (my - ry) * 0.15;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+/* ── SATELLITE + STAR CANVAS ── */
+const canvas = document.getElementById('satCanvas');
 const ctx = canvas.getContext('2d');
-let W, H, stars = [], mouse = {x: 0, y: 0};
+let W, H, stars = [], sats = [];
+
+const SAT_COLORS = ['rgba(255,179,0,', 'rgba(255,213,79,', 'rgba(255,248,180,'];
 
 function resize() {
   W = canvas.width = window.innerWidth;
   H = canvas.height = window.innerHeight;
 }
 
-function initStars() {
+function initScene() {
   stars = [];
-  const n = Math.floor((W * H) / 14000);
+  sats = [];
+  const n = Math.floor((W * H) / 12000);
   for (let i = 0; i < n; i++) {
     stars.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      r: Math.random() * 1.2 + 0.2,
-      vx: (Math.random() - 0.5) * 0.12,
-      vy: (Math.random() - 0.5) * 0.12,
-      alpha: Math.random() * 0.5 + 0.2
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.3 + 0.2,
+      vx: (Math.random() - 0.5) * 0.1,
+      vy: (Math.random() - 0.5) * 0.1,
+      alpha: Math.random() * 0.55 + 0.15
+    });
+  }
+  for (let i = 0; i < 4; i++) {
+    sats.push({
+      cx: W * (0.2 + Math.random() * 0.6),
+      cy: H * (0.2 + Math.random() * 0.6),
+      rx: 80 + Math.random() * 120,
+      ry: 30 + Math.random() * 60,
+      angle: Math.random() * Math.PI * 2,
+      speed: (0.0003 + Math.random() * 0.0004) * (Math.random() > 0.5 ? 1 : -1),
+      tilt: (Math.random() - 0.5) * 0.6,
+      size: 2.5 + Math.random() * 2,
+      color: SAT_COLORS[i % SAT_COLORS.length],
+      trail: []
     });
   }
 }
 
-function draw() {
+function drawScene() {
   ctx.clearRect(0, 0, W, H);
+
   stars.forEach(s => {
     s.x += s.vx; s.y += s.vy;
-    if (s.x < 0) s.x = W;
-    if (s.x > W) s.x = 0;
-    if (s.y < 0) s.y = H;
-    if (s.y > H) s.y = 0;
+    if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+    if (s.y < 0) s.y = H; if (s.y > H) s.y = 0;
     ctx.beginPath();
     ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(14,155,130,${s.alpha})`;
+    ctx.fillStyle = `rgba(255,213,79,${s.alpha})`;
     ctx.fill();
   });
 
   stars.forEach((a, i) => {
-    stars.slice(i + 1).forEach(b => {
+    stars.slice(i + 1, i + 6).forEach(b => {
       const dx = a.x - b.x, dy = a.y - b.y;
       const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < 120) {
+      if (dist < 100) {
         ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = `rgba(14,155,130,${0.15 * (1 - dist/120)})`;
-        ctx.lineWidth = 0.5;
-        ctx.stroke();
+        ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(255,179,0,${0.12 * (1 - dist/100)})`;
+        ctx.lineWidth = 0.5; ctx.stroke();
       }
     });
   });
 
-  requestAnimationFrame(draw);
+  sats.forEach(sat => {
+    sat.angle += sat.speed;
+    const cosT = Math.cos(sat.tilt), sinT = Math.sin(sat.tilt);
+    const lx = sat.rx * Math.cos(sat.angle);
+    const ly = sat.ry * Math.sin(sat.angle);
+    const x = sat.cx + lx * cosT - ly * sinT;
+    const y = sat.cy + lx * sinT + ly * cosT;
+
+    sat.trail.push({x, y});
+    if (sat.trail.length > 28) sat.trail.shift();
+
+    for (let i = 1; i < sat.trail.length; i++) {
+      const alpha = (i / sat.trail.length) * 0.35;
+      ctx.beginPath();
+      ctx.moveTo(sat.trail[i-1].x, sat.trail[i-1].y);
+      ctx.lineTo(sat.trail[i].x, sat.trail[i].y);
+      ctx.strokeStyle = sat.color + alpha + ')';
+      ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    ctx.beginPath();
+    ctx.arc(x, y, sat.size, 0, Math.PI * 2);
+    ctx.fillStyle = sat.color + '0.9)';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(x, y, sat.size + 3, 0, Math.PI * 2);
+    ctx.strokeStyle = sat.color + '0.3)';
+    ctx.lineWidth = 1; ctx.stroke();
+  });
+
+  requestAnimationFrame(drawScene);
 }
 
-resize();
-initStars();
-draw();
-window.addEventListener('resize', () => { resize(); initStars(); });
+resize(); initScene(); drawScene();
+window.addEventListener('resize', () => { resize(); initScene(); });
 
-/* ── SCROLL REVEAL ── */
+/* ── TYPING ANIMATION ── */
+const titles = [
+  'Remote Sensing Scientist',
+  'Atmospheric Modeler',
+  'Environmental Health Scientist',
+  'Geospatial ML Engineer',
+  'Satellite Data Architect'
+];
+let ti = 0, ci = 0, deleting = false;
+const typedEl = document.getElementById('typed-text');
+
+function type() {
+  const current = titles[ti];
+  if (!deleting) {
+    typedEl.textContent = current.substring(0, ci + 1);
+    ci++;
+    if (ci === current.length) { deleting = true; setTimeout(type, 2000); return; }
+    setTimeout(type, 65);
+  } else {
+    typedEl.textContent = current.substring(0, ci - 1);
+    ci--;
+    if (ci === 0) { deleting = false; ti = (ti + 1) % titles.length; setTimeout(type, 400); return; }
+    setTimeout(type, 35);
+  }
+}
+setTimeout(type, 1200);
+
+/* ── COUNTER ANIMATION ── */
+function animateCounter(el) {
+  const target = parseInt(el.dataset.target);
+  const suffix = el.dataset.suffix || '';
+  const duration = 1800;
+  const start = performance.now();
+  function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.floor(ease * target) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = target + suffix;
+  }
+  requestAnimationFrame(step);
+}
+
+/* ── SCROLL REVEAL + COUNTER TRIGGER ── */
 const reveals = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries) => {
+const counters = document.querySelectorAll('.stat-num[data-target]');
+let countersStarted = false;
+
+const revealObs = new IntersectionObserver((entries) => {
   entries.forEach((entry, i) => {
     if (entry.isIntersecting) {
-      setTimeout(() => entry.target.classList.add('visible'), i * 60);
-      observer.unobserve(entry.target);
+      setTimeout(() => entry.target.classList.add('visible'), i * 70);
+      revealObs.unobserve(entry.target);
     }
   });
 }, { threshold: 0.1 });
+reveals.forEach(el => revealObs.observe(el));
 
-reveals.forEach(el => observer.observe(el));
+const heroObs = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting && !countersStarted) {
+    countersStarted = true;
+    setTimeout(() => counters.forEach(animateCounter), 1000);
+  }
+}, { threshold: 0.5 });
+const heroStats = document.querySelector('.hero-stats');
+if (heroStats) heroObs.observe(heroStats);
 
-/* ── NAV SCROLL STYLE ── */
+/* ── CARD MOUSE GLOW ── */
+document.querySelectorAll('.project-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const px = ((e.clientX - r.left) / r.width * 100).toFixed(1);
+    const py = ((e.clientY - r.top) / r.height * 100).toFixed(1);
+    card.style.setProperty('--mx', px + '%');
+    card.style.setProperty('--my', py + '%');
+  });
+});
+
+/* ── SCROLL PROGRESS BAR ── */
+const bar = document.getElementById('progress-bar');
 window.addEventListener('scroll', () => {
-  document.querySelector('nav').style.boxShadow =
-    window.scrollY > 50 ? '0 4px 32px rgba(0,0,0,0.4)' : 'none';
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  bar.style.width = pct + '%';
+});
+
+/* ── ACTIVE NAV ── */
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const navObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => a.classList.remove('active'));
+      const active = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.4 });
+sections.forEach(s => navObs.observe(s));
+
+/* ── NAV SHADOW ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').style.boxShadow =
+    window.scrollY > 50 ? '0 4px 32px rgba(0,0,0,0.5)' : 'none';
 });
 </script>
 </body>
